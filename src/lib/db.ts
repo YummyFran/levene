@@ -2,6 +2,9 @@ import { openDB, type DBSchema, type IDBPDatabase } from "idb";
 import { builtinPresentations } from "@/lib/presentations/registry";
 import type { PresentationDoc } from "@/lib/types";
 
+/** Bump when built-in slide content changes so an already-open browser replaces the stored deck. */
+export const BUILTIN_REVISION = 2;
+
 interface FolioDb extends DBSchema {
   presentations: {
     key: string;
@@ -9,7 +12,7 @@ interface FolioDb extends DBSchema {
   };
   meta: {
     key: string;
-    value: { key: string; seeded?: boolean };
+    value: { key: string; seeded?: boolean; revision?: number };
   };
 }
 
@@ -37,14 +40,30 @@ function db() {
 export async function ensureSeeded(): Promise<void> {
   const database = await db();
   const flag = await database.get("meta", "seed");
-  if (flag?.seeded) return;
   const now = Date.now();
+  const decks = builtinPresentations(now);
   const tx = database.transaction(["presentations", "meta"], "readwrite");
-  for (const deck of builtinPresentations(now)) {
-    const existing = await tx.objectStore("presentations").get(deck.id);
-    if (!existing) await tx.objectStore("presentations").put(deck);
+  if (!flag?.seeded) {
+    for (const deck of decks) {
+      const existing = await tx.objectStore("presentations").get(deck.id);
+      if (!existing) await tx.objectStore("presentations").put(deck);
+    }
+  } else if (flag.revision !== BUILTIN_REVISION) {
+    for (const deck of decks) {
+      const existing = await tx.objectStore("presentations").get(deck.id);
+      if (!existing?.builtin) continue;
+      await tx.objectStore("presentations").put({
+        ...deck,
+        title: existing.title,
+        createdAt: existing.createdAt,
+        lastOpenedAt: existing.lastOpenedAt,
+      });
+    }
+  } else {
+    await tx.done;
+    return;
   }
-  await tx.objectStore("meta").put({ key: "seed", seeded: true });
+  await tx.objectStore("meta").put({ key: "seed", seeded: true, revision: BUILTIN_REVISION });
   await tx.done;
 }
 
