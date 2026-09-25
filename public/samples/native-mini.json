@@ -1,0 +1,28 @@
+{
+  "title": "Native JSON sample",
+  "slides": [
+    {
+      "id": "s1",
+      "notes": "This file uses the native presentation shape.",
+      "block": {
+        "type": "title",
+        "kicker": "Sample",
+        "title": "A deck stored as JSON",
+        "subtitle": "Import this file from the library to confirm the native format."
+      }
+    },
+    {
+      "id": "s2",
+      "block": {
+        "type": "summary",
+        "kicker": "Shape",
+        "title": "What the file contains",
+        "items": [
+          "A title string.",
+          "A slides array.",
+          "Each slide has an id, optional notes, and a block."
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #f3efe6;
+  --ink: #1c1915;
+  --muted: #5e584e;
+  --line: #ddd6c8;
+  --navy: #1c3348;
+  --burgundy: #6f2f38;
+  --gold: #8d7043;
+  --calc: #e7eef1;
+  --ok: #1f4d3a;
+  --warn: #8a3b1a;
+  --card: #faf7f2;
+  --background: var(--paper);
+  --foreground: var(--ink);
+}
+
+.overview-light {
+  --paper: #f3efe6;
+  --ink: #1c1915;
+  --muted: #5e584e;
+  --line: #ddd6c8;
+  --navy: #1c3348;
+  --burgundy: #6f2f38;
+  --gold: #8d7043;
+  --calc: #e7eef1;
+  --ok: #1f4d3a;
+  --warn: #8a3b1a;
+  --card: #faf7f2;
+  background: #f3efe6;
+  color: #1c1915;
+}
+
+.presenter-dark {
+  --paper: #12171c;
+  --ink: #f3efe6;
+  --muted: #c4bdb2;
+  --line: #2c3540;
+  --navy: #d5e2eb;
+  --burgundy: #f0c2c6;
+  --gold: #e4c98a;
+  --calc: #1b262e;
+  --ok: #b7dfc8;
+  --warn: #f0b089;
+  --card: #1a2128;
+  --background: var(--paper);
+  --foreground: var(--ink);
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-navy: var(--navy);
+  --color-burgundy: var(--burgundy);
+  --color-gold: var(--gold);
+  --color-calc: var(--calc);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-card: var(--card);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-source-sans);
+  --font-serif: var(--font-source-serif);
+  --font-mono: var(--font-plex-mono);
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-source-sans), "Source Sans 3", sans-serif;
+}
+
+.font-serif {
+  font-family: var(--font-source-serif), "Source Serif 4", serif;
+}
+
+.font-mono {
+  font-family: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
+}
+
+:focus-visible {
+  outline: 2px solid var(--navy);
+  outline-offset: 2px;
+}
