@@ -133,6 +133,7 @@ export function buildLeveneDeck(now = Date.now()): PresentationDoc {
         kicker: "Statistic",
         title: "Levene’s W, and what each piece is",
         formula: "W = ((N − k) / (k − 1)) · (Σ nᵢ (Z̄ᵢ − Z̄)²) / (Σ Σ (Zᵢⱼ − Z̄ᵢ)²)",
+        stacked: "mean",
         symbols: [
           { symbol: "W", meaning: "The test statistic, referred to an F distribution." },
           { symbol: "k", meaning: "Number of groups." },
@@ -257,6 +258,7 @@ export function buildLeveneDeck(now = Date.now()): PresentationDoc {
         kicker: "Step 4",
         title: "Test Statistic Used (Statistical Tool)",
         formula: "W = ((N − k) / (k − 1)) · SSB_z / SSW_z",
+        stacked: "parts",
         symbols: [
           { symbol: "Tool", meaning: "Levene’s test, mean-centered. Distribution: F." },
           { symbol: "k", meaning: "2 heads, so df₁ = k − 1 = 1." },

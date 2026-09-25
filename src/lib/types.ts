@@ -88,6 +88,8 @@ export type SlideBlock =
       kicker?: string;
       title: string;
       formula: string;
+      /** Stacked fraction display instead of the one-line formula string. */
+      stacked?: "mean" | "median" | "parts";
       symbols: SymbolRow[];
       note?: string;
     }

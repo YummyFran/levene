@@ -70,16 +70,20 @@ export function SlideView({
     case "formula":
       return (
         <Frame kicker={block.kicker} title={block.title}>
-          <p className="mt-6 bg-calc px-6 py-5 font-mono text-xl leading-8 text-navy">{block.formula}</p>
-          <dl className="mt-6 grid grid-cols-2 gap-x-8 gap-y-3">
+          {block.stacked ? (
+            <StackedLevene kind={block.stacked} plain={block.formula} />
+          ) : (
+            <p className="mt-6 bg-calc px-6 py-5 font-mono text-xl leading-8 text-navy">{block.formula}</p>
+          )}
+          <dl className={cn("grid grid-cols-2 gap-x-8 gap-y-1", block.stacked ? "mt-4" : "mt-6")}>
             {block.symbols.map((row) => (
-              <div key={row.symbol} className="grid grid-cols-[5.5rem_1fr] gap-3 border-b border-line py-2">
+              <div key={row.symbol} className="grid grid-cols-[5.5rem_1fr] gap-3 border-b border-line py-1.5">
                 <dt className="font-mono text-sm text-burgundy">{row.symbol}</dt>
-                <dd className="text-sm leading-6 text-ink">{row.meaning}</dd>
+                <dd className="text-sm leading-5 text-ink">{row.meaning}</dd>
               </div>
             ))}
           </dl>
-          {block.note && <p className="mt-4 text-sm leading-6 text-muted">{block.note}</p>}
+          {block.note && <p className="mt-3 text-sm leading-6 text-muted">{block.note}</p>}
         </Frame>
       );
     case "table":
@@ -276,6 +280,103 @@ export function SlideView({
     default:
       return null;
   }
+}
+
+function StackedLevene({ kind, plain }: { kind: "mean" | "median" | "parts"; plain: string }) {
+  const median = kind === "median";
+  return (
+    <div className="mt-4 space-y-3">
+      <p className="sr-only">{plain}</p>
+      <div className="bg-calc px-6 py-4 text-navy">
+        <p className="text-[11px] uppercase tracking-[0.16em] text-burgundy">
+          {kind === "parts"
+            ? "Levene’s W, written with the sums of squares"
+            : median
+              ? "Levene’s test statistic (Brown–Forsythe, median-centered)"
+              : "Levene’s test statistic (mean-centered)"}
+        </p>
+        <div className="mt-2 flex items-center justify-center gap-3 font-serif text-[1.65rem] leading-none">
+          <span className="italic">W</span>
+          <span>=</span>
+          <Fraction num={<span>N − k</span>} den={<span>k − 1</span>} />
+          <span>·</span>
+          {kind === "parts" ? (
+            <Fraction num={<span>SSB<sub>z</sub></span>} den={<span>SSW<sub>z</sub></span>} />
+          ) : (
+            <Fraction
+              num={
+                <span className="inline-flex items-center">
+                  <Sigma sub="i = 1" sup="k" />
+                  <span className="ml-1">
+                    n<sub>i</sub>(<Bar>Z</Bar><sub>i</sub> − <Bar>Z</Bar>)<sup>2</sup>
+                  </span>
+                </span>
+              }
+              den={
+                <span className="inline-flex items-center">
+                  <Sigma sub="i = 1" sup="k" />
+                  <Sigma sub="j = 1" sup={<span>n<sub>i</sub></span>} />
+                  <span className="ml-1">
+                    (Z<sub>ij</sub> − <Bar>Z</Bar><sub>i</sub>)<sup>2</sup>
+                  </span>
+                </span>
+              }
+            />
+          )}
+        </div>
+      </div>
+      <div className="bg-calc px-6 py-4 text-navy">
+        <p className="text-[11px] uppercase tracking-[0.16em] text-burgundy">
+          {median ? "Absolute deviation from the group median" : "Absolute deviation from the group mean"}
+        </p>
+        <p className="mt-2 text-center font-serif text-[1.7rem]">
+          Z<sub>ij</sub> = |Y<sub>ij</sub> − {median ? <Tilde>Y</Tilde> : <Bar>Y</Bar>}
+          <sub>i</sub>|
+        </p>
+        {kind === "mean" && (
+          <p className="mt-2 text-center font-serif text-lg text-muted">
+            Brown–Forsythe uses the median instead: Z<sub>ij</sub> = |Y<sub>ij</sub> − <Tilde>Y</Tilde>
+            <sub>i</sub>|
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Fraction({ num, den }: { num: ReactNode; den: ReactNode }) {
+  return (
+    <span className="inline-flex flex-col items-center justify-center px-1 text-[0.92em]">
+      <span className="px-3 pb-1">{num}</span>
+      <span className="h-px w-full bg-navy" />
+      <span className="px-3 pt-1">{den}</span>
+    </span>
+  );
+}
+
+function Sigma({ sub, sup }: { sub: ReactNode; sup: ReactNode }) {
+  return (
+    <span className="inline-flex items-center">
+      <span className="inline-flex flex-col items-center leading-none">
+        <span className="text-[0.45em]">{sup}</span>
+        <span className="text-[1.35em] leading-none">Σ</span>
+        <span className="text-[0.45em]">{sub}</span>
+      </span>
+    </span>
+  );
+}
+
+function Bar({ children }: { children: ReactNode }) {
+  return <span className="inline-block border-t border-current px-[0.08em] leading-none">{children}</span>;
+}
+
+function Tilde({ children }: { children: ReactNode }) {
+  return (
+    <span className="relative inline-block px-[0.05em]">
+      <span className="absolute -top-[0.55em] left-0 right-0 text-center text-[0.55em]">~</span>
+      {children}
+    </span>
+  );
 }
 
 function Frame({
