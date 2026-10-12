@@ -107,17 +107,21 @@ export function SlideView({
               <tbody>
                 {block.rows.map((row, index) => (
                   <tr key={index} className={index % 2 ? "bg-calc/60" : "bg-card"}>
-                    {row.map((cell, cellIndex) => (
-                      <td
-                        key={cellIndex}
-                        className={cn(
-                          "border-t border-line px-3 py-2",
-                          block.numeric && cellIndex > 0 && "text-right font-mono tabular-nums",
-                        )}
-                      >
-                        {cell}
-                      </td>
-                    ))}
+                    {row.map((cell, cellIndex) => {
+                      const marked = index === block.highlightRow && cellIndex === block.highlightCol;
+                      return (
+                        <td
+                          key={cellIndex}
+                          className={cn(
+                            "border-t border-line px-3 py-2",
+                            block.numeric && cellIndex > 0 && "text-right font-mono tabular-nums",
+                            marked && "bg-burgundy font-medium text-paper",
+                          )}
+                        >
+                          {cell}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>
