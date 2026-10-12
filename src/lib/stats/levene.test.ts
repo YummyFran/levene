@@ -116,9 +116,36 @@ describe("Levene deck", () => {
     expect(text).toContain("6.804");
     expect(text).toContain("0.0106");
     expect(text).toContain("Σ nᵢ (Z̄ᵢ − Z̄)²");
+    expect(text).toContain("44 / 15");
+    expect(text).toContain("30720/225");
+    expect(text).toContain("0.64 + 1.44 + 1.44 + 0.64 + 0.64 = 4.80");
+    expect(text).toContain("1.44 + 38.44 + 14.44 + 46.24 + 10.24 = 110.80");
+    expect(text).toContain("0.01 < p < 0.025");
     expect(text).not.toContain("Head A");
     expect(text).not.toContain("13.625");
     const kickers = deck.slides.map((s) => ("kicker" in s.block ? s.block.kicker ?? "" : ""));
+    expect(kickers.filter((kicker) => kicker === "Step 5 of 7").length).toBeGreaterThanOrEqual(10);
+    const tables = deck.slides
+      .map((s) => s.block)
+      .filter((block) => block.type === "table");
+    const withinA = tables.find((block) => block.title.includes("Methods A and C"));
+    const withinB = tables.find((block) => block.title.includes("Method B"));
+    expect(withinA?.rows).toEqual([
+      ["1", "0", "−0.80", "0.64"],
+      ["2", "2", "1.20", "1.44"],
+      ["3", "2", "1.20", "1.44"],
+      ["4", "0", "−0.80", "0.64"],
+      ["5", "0", "−0.80", "0.64"],
+      ["Sum", "—", "—", "4.80"],
+    ]);
+    expect(withinB?.rows).toEqual([
+      ["1", "6", "−1.20", "1.44"],
+      ["2", "1", "−6.20", "38.44"],
+      ["3", "11", "3.80", "14.44"],
+      ["4", "14", "6.80", "46.24"],
+      ["5", "4", "−3.20", "10.24"],
+      ["Sum", "—", "—", "110.80"],
+    ]);
     const stepOrder = [1, 2, 3, 4, 5, 6, 7].map((n) =>
       kickers.findIndex((kicker) => kicker === `Step ${n} of 7`),
     );
