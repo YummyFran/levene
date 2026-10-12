@@ -340,12 +340,6 @@ function StackedLevene({ kind, plain }: { kind: "mean" | "median" | "parts"; pla
           Z<sub>ij</sub> = |Y<sub>ij</sub> − {median ? <Tilde>Y</Tilde> : <Bar>Y</Bar>}
           <sub>i</sub>|
         </p>
-        {kind === "mean" && (
-          <p className="mt-2 text-center font-serif text-lg text-muted">
-            Brown–Forsythe uses the median instead: Z<sub>ij</sub> = |Y<sub>ij</sub> − <Tilde>Y</Tilde>
-            <sub>i</sub>|
-          </p>
-        )}
       </div>
     </div>
   );

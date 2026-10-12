@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { fCdf, fPpf, fSf } from "@/lib/stats/f-distribution";
-import { EXAMPLE_GROUPS, leveneTest } from "@/lib/stats/levene";
+import { EXAMPLE_GROUPS, TEACHING_METHOD_GROUPS, leveneTest } from "@/lib/stats/levene";
 import { buildLeveneDeck } from "@/lib/presentations/levene-deck";
 
 describe("F distribution", () => {
@@ -85,21 +85,41 @@ describe("Levene calculation", () => {
   });
 });
 
+describe("three teaching methods", () => {
+  const result = leveneTest(TEACHING_METHOD_GROUPS, { center: "mean", alpha: 0.05 });
+
+  it("matches the mean-centered classroom arithmetic", () => {
+    expect(result.groups.map((group) => group.sampleMean)).toEqual([80, 76, 85]);
+    expect(result.groups[0].absoluteDeviations).toEqual([0, 2, 2, 0, 0]);
+    expect(result.groups[1].absoluteDeviations).toEqual([6, 1, 11, 14, 4]);
+    expect(result.groups[2].absoluteDeviations).toEqual([0, 2, 2, 0, 0]);
+    expect(result.groups.map((group) => group.meanAbsoluteDeviation)).toEqual([0.8, 7.2, 0.8]);
+    expect(result.grandMeanOfDeviations).toBeCloseTo(44 / 15, 10);
+    expect(result.betweenSumOfSquares).toBeCloseTo(136.5333333333, 8);
+    expect(result.withinSumOfSquares).toBeCloseTo(120.4, 8);
+    expect(result.df1).toBe(2);
+    expect(result.df2).toBe(12);
+    expect(result.statistic).toBeCloseTo(6.803986711, 6);
+    expect(result.pValue).toBeCloseTo(0.0105885, 5);
+    expect(result.rejectNull).toBe(true);
+    expect(result.criticalValue).toBeGreaterThan(3);
+    expect(result.statistic).toBeGreaterThan(result.criticalValue);
+  });
+});
+
 describe("Levene deck", () => {
   it("embeds the computed statistic rather than a separate hardcoded answer", () => {
     const deck = buildLeveneDeck();
     const text = JSON.stringify(deck.slides);
     expect(deck.title).toBe("Levene’s Test: Testing Equality of Variances");
-    expect(text).toContain("45");
-    expect(text).toContain("42");
-    expect(text).toContain("4.600");
-    expect(deck.slides.length).toBeGreaterThan(15);
-    expect(deck.slides.length).toBeLessThan(22);
-    const kickers = deck.slides
-      .map((s) => ("kicker" in s.block ? s.block.kicker : ""))
-      .filter(Boolean);
-    const stepOrder = [1, 2, 3, 4, 5, 6, 7].map((n) =>
-      kickers.findIndex((k) => k?.startsWith(`Step ${n}`)),
+    expect(text).toContain("Method A");
+    expect(text).toContain("6.804");
+    expect(text).toContain("0.0106");
+    expect(text).not.toContain("Head A");
+    expect(text).not.toContain("13.625");
+    const kickers = deck.slides.map((s) => ("kicker" in s.block ? s.block.kicker ?? "" : ""));
+    const stepOrder = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map((n) =>
+      kickers.findIndex((kicker) => new RegExp(`^Step ${n}\\b`).test(kicker ?? "")),
     );
     expect(stepOrder.every((i) => i >= 0)).toBe(true);
     for (let i = 1; i < stepOrder.length; i++) {
