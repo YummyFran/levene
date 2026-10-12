@@ -101,6 +101,8 @@ export type SlideBlock =
       columns: string[];
       rows: string[][];
       numeric?: boolean;
+      highlightRow?: number;
+      highlightCol?: number;
     }
   | {
       type: "dots";

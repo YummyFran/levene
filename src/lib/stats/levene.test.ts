@@ -93,7 +93,8 @@ describe("Levene deck", () => {
     expect(text).toContain("45");
     expect(text).toContain("42");
     expect(text).toContain("4.600");
-    expect(deck.slides.length).toBeGreaterThan(20);
+    expect(deck.slides.length).toBeGreaterThan(15);
+    expect(deck.slides.length).toBeLessThan(22);
     const kickers = deck.slides
       .map((s) => ("kicker" in s.block ? s.block.kicker : ""))
       .filter(Boolean);

@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { resolveStackedFormula } from "@/lib/formula-layout";
 import type { SlideBlock } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -67,15 +68,16 @@ export function SlideView({
           {block.footnote && <p className="mt-6 text-sm leading-6 text-muted">{block.footnote}</p>}
         </Frame>
       );
-    case "formula":
+    case "formula": {
+      const stacked = resolveStackedFormula(block);
       return (
         <Frame kicker={block.kicker} title={block.title}>
-          {block.stacked ? (
-            <StackedLevene kind={block.stacked} plain={block.formula} />
+          {stacked ? (
+            <StackedLevene kind={stacked} plain={block.formula} />
           ) : (
             <p className="mt-6 bg-calc px-6 py-5 font-mono text-xl leading-8 text-navy">{block.formula}</p>
           )}
-          <dl className={cn("grid grid-cols-2 gap-x-8 gap-y-1", block.stacked ? "mt-4" : "mt-6")}>
+          <dl className={cn("grid grid-cols-2 gap-x-8 gap-y-1", stacked ? "mt-4" : "mt-6")}>
             {block.symbols.map((row) => (
               <div key={row.symbol} className="grid grid-cols-[5.5rem_1fr] gap-3 border-b border-line py-1.5">
                 <dt className="font-mono text-sm text-burgundy">{row.symbol}</dt>
@@ -86,6 +88,7 @@ export function SlideView({
           {block.note && <p className="mt-3 text-sm leading-6 text-muted">{block.note}</p>}
         </Frame>
       );
+    }
     case "table":
       return (
         <Frame kicker={block.kicker} title={block.title}>
@@ -104,17 +107,21 @@ export function SlideView({
               <tbody>
                 {block.rows.map((row, index) => (
                   <tr key={index} className={index % 2 ? "bg-calc/60" : "bg-card"}>
-                    {row.map((cell, cellIndex) => (
-                      <td
-                        key={cellIndex}
-                        className={cn(
-                          "border-t border-line px-3 py-2",
-                          block.numeric && cellIndex > 0 && "text-right font-mono tabular-nums",
-                        )}
-                      >
-                        {cell}
-                      </td>
-                    ))}
+                    {row.map((cell, cellIndex) => {
+                      const marked = index === block.highlightRow && cellIndex === block.highlightCol;
+                      return (
+                        <td
+                          key={cellIndex}
+                          className={cn(
+                            "border-t border-line px-3 py-2",
+                            block.numeric && cellIndex > 0 && "text-right font-mono tabular-nums",
+                            marked && "bg-burgundy font-medium text-paper",
+                          )}
+                        >
+                          {cell}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>
