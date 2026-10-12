@@ -3,7 +3,7 @@ import { builtinPresentations } from "@/lib/presentations/registry";
 import type { PresentationDoc } from "@/lib/types";
 
 /** Bump when built-in slide content changes so an already-open browser replaces the stored deck. */
-export const BUILTIN_REVISION = 3;
+export const BUILTIN_REVISION = 4;
 
 interface FolioDb extends DBSchema {
   presentations: {

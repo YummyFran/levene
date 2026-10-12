@@ -171,3 +171,9 @@ export const EXAMPLE_GROUPS: LeveneGroupInput[] = [
   { label: "Head A", values: [12, 14, 13, 15, 14, 13, 12, 16] },
   { label: "Head B", values: [8, 18, 9, 20, 7, 19, 11, 17] },
 ];
+
+export const TEACHING_METHOD_GROUPS: LeveneGroupInput[] = [
+  { label: "Method A", values: [80, 82, 78, 80, 80] },
+  { label: "Method B", values: [70, 75, 65, 90, 80] },
+  { label: "Method C", values: [85, 87, 83, 85, 85] },
+];
