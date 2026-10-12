@@ -115,11 +115,12 @@ describe("Levene deck", () => {
     expect(text).toContain("Method A");
     expect(text).toContain("6.804");
     expect(text).toContain("0.0106");
+    expect(text).toContain("Σ nᵢ (Z̄ᵢ − Z̄)²");
     expect(text).not.toContain("Head A");
     expect(text).not.toContain("13.625");
     const kickers = deck.slides.map((s) => ("kicker" in s.block ? s.block.kicker ?? "" : ""));
-    const stepOrder = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map((n) =>
-      kickers.findIndex((kicker) => new RegExp(`^Step ${n}\\b`).test(kicker ?? "")),
+    const stepOrder = [1, 2, 3, 4, 5, 6, 7].map((n) =>
+      kickers.findIndex((kicker) => kicker === `Step ${n} of 7`),
     );
     expect(stepOrder.every((i) => i >= 0)).toBe(true);
     for (let i = 1; i < stepOrder.length; i++) {
